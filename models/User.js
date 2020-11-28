@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
   pseudo: {
@@ -10,6 +10,8 @@ const UserSchema = new mongoose.Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
+    select: false,
   },
 
   password: {
@@ -28,16 +30,21 @@ const UserSchema = new mongoose.Schema({
   admin: {
     type: Boolean,
     default: false,
+    select: false,
   },
 
-  friends: {
+  conversations: {
     type: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: 'Conversation',
       },
     ],
   },
+
+  avatar: {
+    type: String,
+  },
 });
 
-module.exports = mongoose.model("User", UserSchema);
+module.exports = mongoose.model('User', UserSchema);

@@ -1,11 +1,11 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const ConversationSchema = new mongoose.Schema({
   users: {
     type: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
+        ref: 'User',
       },
     ],
   },
@@ -13,10 +13,15 @@ const ConversationSchema = new mongoose.Schema({
   messages: {
     type: [
       {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Message",
+        author: { type: String },
+        text: { type: String },
+        date: { type: Date, default: Date.now },
       },
     ],
+  },
+
+  lastMessage: {
+    type: String,
   },
 
   date: {
@@ -25,4 +30,4 @@ const ConversationSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Conversation", ConversationSchema);
+module.exports = mongoose.model('Conversation', ConversationSchema);
