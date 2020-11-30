@@ -78,16 +78,32 @@ exports.login = async (req, res) => {
           firstname: user.firstname,
           friends: user.friends,
           admin: user.admin,
-          token: jwt.sign({ _id: user._id }, process.env.RANDOM_TOKEN_SECRET, {
-            expiresIn: '1h',
-          }),
         };
 
-        res.status(200).json({ success: true, user: userToSend });
+        const token = jwt.sign(
+          { _id: user._id },
+          process.env.RANDOM_TOKEN_SECRET,
+          {
+            expiresIn: '1h',
+          }
+        );
+
+        res.status(200).json({ success: true, user: userToSend, token });
       }
     }
     res.status(401).json({ success: false, error: 'Identifiants incorrects' });
   } catch (error) {}
+};
+
+exports.decriptToken = async (req, res) => {
+  try {
+    const { token } = req.body;
+    const decodedToken = jwt.verify(token, process.env.RANDOM_TOKEN_SECRET);
+    const userId = decodedToken.userId;
+    res.json({ success: true, decodedToken, userId });
+  } catch (error) {
+    res.json({ success: false, error: error.message });
+  }
 };
 
 exports.getAllUsers = async (req, res) => {
@@ -140,7 +156,7 @@ exports.getConversationsByUserId = async (req, res) => {
 exports.getUserInfo = async (req, res) => {
   try {
     const { id } = req.params;
-    const user = await User.findById(id);
+    const user = await User.findById(id).select('-password');
     res.json({ success: true, user });
   } catch (error) {
     res.json({ success: false, error: error.message });
